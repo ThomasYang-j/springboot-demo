@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.springbootdemo.mapper.CaseInfoMapper" >
+
+    <select id="ahquerycaseinfoV2" resultType="java.util.Map">
+select a.ah,cast(d.mc as varchar2(510)) ajzt,a.dsr,a.sarq,a.larq,g.ktsj,a.jarq,a.fydm,b.fymc,a.cbbm1 cbbm,c.bmmc,f.yhxm cbfg,e.yhxm sjy,g.ftmc,a.ahdm,f.userid as cbfgid
+from tdh15.eaj a
+left outer join tdh15.ts_fymc b on b.fydm = a.fydm
+left outer join tdh15.t_depart c on c.bmdm = a.cbbm1
+left outer join tdh15.ts_dm d on d.code = a.ajzt and d.kind = 'AJZT'
+left outer join tdh15.t_user e on e.yhdm = a.sjy
+left outer join tdh15.t_user f on f.yhdm = a.cbr
+left outer join (select t1.ahdm,t1.ktrq||' '||t1.kssj ktsj,t3.ftmc from tdh15.eaj_ftsy t1
+join (select ahdm,max(xh) xh from tdh15.eaj_ftsy group by ahdm) t2 on t1.ahdm = t2.ahdm and t1.xh = t2.xh
+left outer join tdh15.tu_ftpz t3 on t1.ktft = t3.fydm||t3.ftxh)  g on a.ahdm = g.ahdm
+where
+
+a.nd = #{sand} and a.dz = #{ajlx} and a.xh = #{ajbh}
+  and a.fydm = #{fydm}
+union all
+select t.ah,t3.dmmc ajzt,'申请人：'||t.s_sqr||';被执行人：'||t.s_bzxr as dsr,'' sarq,to_char(t.larq,'yyyymmdd') larq,'' ktsj,to_char(t2.sjjarq,'yyyymmdd') jarq,t4.xzqhdm fydm,t4.fymc,
+t.cbbm,t5.mc bmmc,t6.xm cbfg,t7.xm sjy,'' ftmc,t.ajbs ahdm,t6.oayhid as cbfgid
+ from zxnew.ajjb t
+left outer join zxnew.dm_ajzh t1 on t.ajzh = t1.ajzh and t.fydm = t1.fydm
+left outer join zxnew.ja t2 on t.sanh = t2.sanh and t.fydm = t2.fydm and t.sabh = t2.sabh
+left outer join zxnew.dmwh t3 on t.ajzt = t3.dm and t3.dmlx = '14'
+left outer join zd.zd_fy t4 on t.fydm = t4.fybm
+left outer join rs.rs_dm_bmszb t5 on t.cbbm = t5.bm and t.fydm = t5.fy
+left outer join rs.rs_zb_zyrsjbxx t6 on t.cbrdm = t6.zybm
+left outer join rs.rs_zb_zyrsjbxx t7 on t.sjydm = t7.zybm
+where
+t.sanh = #{sand} and t1.dsjajzh = #{ajlx} and t.ajbh = #{ajbh}
+  and t.fydm = #{fydm} ;
+
+    </select>
+
+
+
+    <select id="caseCert" resultType="java.util.Map">
+select * from (
+select a.ah,cast(d.mc as varchar2(510)) ajzt,a.dsr,a.sarq,a.larq,g.ktsj,a.jarq,a.fydm,b.fymc,a.cbbm1 cbbm,c.bmmc,f.yhxm cbfg,e.yhxm sjy,g.ftmc,t.ahdm,f.userid as cbfgid
+from (select ahdm from tdh15.edsr where (zzjgdm =#{sfzhm} or sfzhm =#{sfzhm} ) ) t
+join (select * from tdh15.eaj where (larq >= #{ssrq} or #{ssrq} is null ) and fydm like concat( #{fydm},'%') ) a on a.ahdm = t.ahdm
+left outer join (select t1.ahdm,t1.ktrq||' '||t1.kssj ktsj,t3.ftmc from tdh15.eaj_ftsy t1
+join (select ahdm,max(xh) xh from tdh15.eaj_ftsy group by ahdm) t2 on t1.ahdm = t2.ahdm and t1.xh = t2.xh
+left outer join tdh15.tu_ftpz t3 on t1.ktft = t3.fydm||t3.ftxh)  g on t.ahdm = g.ahdm
+left outer join tdh15.ts_fymc b on b.fydm = a.fydm
+left outer join tdh15.t_depart c on c.bmdm = a.cbbm1
+left outer join tdh15.ts_dm d on d.code = a.ajzt and d.kind = 'AJZT'
+left outer join tdh15.t_user e on e.yhdm = a.sjy
+left outer join tdh15.t_user f on f.yhdm = a.cbr
+union all
+select t.ah,t3.dmmc ajzt,'申请人：'||t.s_sqr||';被执行人：'||t.s_bzxr as dsr,to_char(t.larq,'yyyymmdd') sarq,to_char(t.larq,'yyyymmdd') larq,'' ktsj,to_char(t2.sjjarq,'yyyymmdd') jarq,tt.xzqhdm fydm,tt.fymc,
+t.cbbm,t5.mc bmmc,t6.xm cbfg,t7.xm sjy,'' ftmc,t.ajbs ahdm,t6.oayhid as cbfgid
+from (select a.sanh,a.fydm,a.sabh,b.xzqhdm,b.fymc from zxnew.dsr a,zd.zd_fy b where a.fydm = b.fybm and (tyshxydm  like #{sfzhm} or sfz like #{sfzhm} ) and b.xzqhdm like concat( #{fydm},'%') ) tt
+left outer join zxnew.ajjb t on tt.sanh = t.sanh and tt.fydm = t.fydm and tt.sabh = t.sabh
+left outer join zxnew.dm_ajzh t1 on t.ajzh = t1.ajzh and t.fydm = t1.fydm
+left outer join zxnew.ja t2 on t.sanh = t2.sanh and t.fydm = t2.fydm and t.sabh = t2.sabh
+left outer join rs.rs_zb_zyrsjbxx t6 on t.cbrdm = t6.zybm
+left outer join rs.rs_zb_zyrsjbxx t7 on t.sjydm = t7.zybm
+left outer join rs.rs_dm_bmszb t5 on t.cbbm = t5.bm and t.fydm = t5.fy
+left outer join zxnew.dmwh t3 on t.ajzt = t3.dm and t3.dmlx = '14'
+where (to_char(t.larq,'yyyymmdd') >= #{ssrq} or #{ssrq} is null)
+) order by larq desc ;
+    </select>
+    <select id="ahquerycaseinfo" resultType="java.util.Map">
+
+select a.ah,cast(d.mc as varchar2(510)) ajzt,a.dsr,a.sarq,a.larq,g.ktsj,a.jarq,a.fydm,b.fymc,a.cbbm1 cbbm,c.bmmc,f.yhxm cbfg,e.yhxm sjy,g.ftmc,a.ahdm,f.userid as cbfgid
+from tdh15.eaj a
+left outer join tdh15.ts_fymc b on b.fydm = a.fydm
+left outer join tdh15.t_depart c on c.bmdm = a.cbbm1
+left outer join tdh15.ts_dm d on d.code = a.ajzt and d.kind = 'AJZT'
+left outer join tdh15.t_user e on e.yhdm = a.sjy
+left outer join tdh15.t_user f on f.yhdm = a.cbr
+left outer join (select t1.ahdm,t1.ktrq||' '||t1.kssj ktsj,t3.ftmc from tdh15.eaj_ftsy t1
+join (select ahdm,max(xh) xh from tdh15.eaj_ftsy group by ahdm) t2 on t1.ahdm = t2.ahdm and t1.xh = t2.xh
+left outer join tdh15.tu_ftpz t3 on t1.ktft = t3.fydm||t3.ftxh)  g on a.ahdm = g.ahdm
+where
+
+a.nd = #{sand} and a.dz = #{ajlx} and a.xh = #{ajbh}
+  and a.fydm = #{fydm}
+union all
+select t.ah,t3.dmmc ajzt,'申请人：'||t.s_sqr||';被执行人：'||t.s_bzxr as dsr,'' sarq,to_char(t.larq,'yyyymmdd') larq,'' ktsj,to_char(t2.sjjarq,'yyyymmdd') jarq,t4.xzqhdm fydm,t4.fymc,
+t.cbbm,t5.mc bmmc,t6.xm cbfg,t7.xm sjy,'' ftmc,t.ajbs ahdm,t6.oayhid as cbfgid
+ from zxnew.ajjb t
+left outer join zxnew.dm_ajzh t1 on t.ajzh = t1.ajzh and t.fydm = t1.fydm
+left outer join zxnew.ja t2 on t.sanh = t2.sanh and t.fydm = t2.fydm and t.sabh = t2.sabh
+left outer join zxnew.dmwh t3 on t.ajzt = t3.dm and t3.dmlx = '14'
+left outer join zd.zd_fy t4 on t.fydm = t4.fybm
+left outer join rs.rs_dm_bmszb t5 on t.cbbm = t5.bm and t.fydm = t5.fy
+left outer join rs.rs_zb_zyrsjbxx t6 on t.cbrdm = t6.zybm
+left outer join rs.rs_zb_zyrsjbxx t7 on t.sjydm = t7.zybm
+where
+t.sanh = #{sand} and t1.dsjajzh = #{ajlx} and t.ajbh = #{ajbh}
+  and t.fydm = (case when #{fydm} = '中院' then '1347B60'
+                     when #{fydm} = '吴兴' then '1348B61'
+                     when #{fydm} = '南浔' then '1403B65'
+                     when #{fydm} = '德清' then '1349B62'
+                     when #{fydm} = '长兴' then '1350B63'
+                     when #{fydm} = '安吉' then '1351B64'
+                     when #{fydm} = '南太湖' then '5036B66' end) ;
+
+
+    </select>
+    <select id="qureycaselist" resultType="com.example.springbootdemo.vo.QureycaselistResVO">
+        select a.ah,d.mc ajzt,a.dsr,a.sarq,a.larq,'' ktsj,a.jarq,a.fydm,b.fymc,a.cbbm1 cbbm,c.bmmc,f.yhxm cbfg,e.yhxm sjy,'' ftmc,a.ahdm,f.userid as cbfgid
+        from tdh15.eaj a
+        left outer join tdh15.ts_fymc b on b.fydm = a.fydm
+        left outer join tdh15.t_depart c on c.bmdm = a.cbbm1
+        left outer join tdh15.ts_dm d on d.code = a.ajzt and d.kind = 'AJZT'
+        left outer join tdh15.t_user e on e.yhdm = a.sjy
+        left outer join tdh15.t_user f on f.yhdm = a.cbr
+        <where>
+            <if test="fyjc != null and fyjc != '' ">
+                and b.dm = (case when #{fyjc} = '中院' then '1347'
+                when #{fyjc} = '吴兴' then '1348'
+                when #{fyjc} = '南浔' then '1403'
+                when #{fyjc} = '德清' then '1349'
+                when #{fyjc} = '长兴' then '1350'
+                when #{fyjc} = '安吉' then '1351'
+                when #{fyjc} = '南太湖' then '5036' end)
+            </if>
+            <if test="ajbh != null and ajbh != '' ">
+                and a.xh = #{ajbh}
+            </if>
+            <if test="ajlx != null and ajlx != '' ">
+                and a.dz = #{ajlx}
+            </if>
+            <if test="sand != null and sand != '' ">
+                and a.nd = #{sand}
+            </if>;
+        </where>
+
+    </select>
+    <select id="selectKtsj" resultType="com.alibaba.fastjson.JSONObject">
+        select a.ahdm,a.xh,a.ktrq||' '||a.kssj ktsj,b.ftmc from tdh15.eaj_ftsy a,tdh15.tu_ftpz b where a.ktft = b.fydm||b.ftxh and a.ahdm = #{ahdm} and rownum = 1 order by a.xh desc
+    </select>
+    <select id="qureycaselistZx" resultType="com.example.springbootdemo.vo.QureycaselistResVO">
+        select t.ah,t3.dmmc ajzt,'申请人：'||t.s_sqr||';被执行人：'||t.s_bzxr as dsr,'' sarq,to_char(t.larq,'yyyymmdd') larq,'' ktsj,to_char(t2.sjjarq,'yyyymmdd') jarq,t4.xzqhdm fydm,t4.fymc,
+        t.cbbm,t5.mc bmmc,t6.xm cbfg,t7.xm sjy,'' ftmc,t.ajbs ahdm,t6.oayhid as cbfgid
+        from zxnew.ajjb t
+        left outer join zxnew.dm_ajzh t1 on t.ajzh = t1.ajzh and t.fydm = t1.fydm
+        left outer join zxnew.ja t2 on t.sanh = t2.sanh and t.fydm = t2.fydm and t.sabh = t2.sabh
+        left outer join zxnew.dmwh t3 on t.ajzt = t3.dm and t3.dmlx = '14'
+        left outer join zd.zd_fy t4 on t.fydm = t4.fybm
+        left outer join rs.rs_dm_bmszb t5 on t.cbbm = t5.bm and t.fydm = t5.fy
+        left outer join rs.rs_zb_zyrsjbxx t6 on t.cbrdm = t6.zybm
+        left outer join rs.rs_zb_zyrsjbxx t7 on t.sjydm = t7.zybm
+        <where>
+            <if test="fyjc != null and fyjc != '' ">
+                and t.fydm = (case when #{fyjc} = '中院' then '1347B60'
+                when #{fyjc} = '吴兴' then '1348B61'
+                when #{fyjc} = '南浔' then '1403B65'
+                when #{fyjc} = '德清' then '1349B62'
+                when #{fyjc} = '长兴' then '1350B63'
+                when #{fyjc} = '安吉' then '1351B64'
+                when #{fyjc} = '南太湖' then '5036B66' end)
+            </if>
+            <if test="ajbh != null and ajbh != '' ">
+                and t.ajbh = #{ajbh}
+            </if>
+            <if test="ajlx != null and ajlx != '' ">
+                and t1.dsjajzh = #{ajlx}
+            </if>
+            <if test="sand != null and sand != '' ">
+                and t.sanh = #{sand}
+            </if>;
+        </where>
+    </select>
+    <select id="caseinfobyzjh" resultType="com.example.springbootdemo.vo.CaseinfobyzjhResVO">
+        select a.ah,d.mc ajzt,a.dsr,a.sarq,a.larq,'' ktsj,a.jarq,a.fydm,b.fymc,a.cbbm1 cbbm,c.bmmc,f.yhxm cbfg,e.yhxm sjy,'' ftmc,t.ahdm,f.userid as cbfgid
+        from (select ahdm from tdh15.edsr where (zzjgdm like #{sfzhm} or sfzhm like #{sfzhm} ) ) t
+        join (select * from tdh15.eaj
+        where (larq >= #{ssrq} or #{ssrq} is null ) and fydm like concat( #{fydm},'%') ) a on a.ahdm = t.ahdm
+        left outer join tdh15.ts_fymc b on b.fydm = a.fydm
+        left outer join tdh15.t_depart c on c.bmdm = a.cbbm1
+        left outer join tdh15.ts_dm d on d.code = a.ajzt and d.kind = 'AJZT'
+        left outer join tdh15.t_user e on e.yhdm = a.sjy
+        left outer join tdh15.t_user f on f.yhdm = a.cbr;
+    </select>
+    <select id="caseinfobyzjhZx" resultType="com.example.springbootdemo.vo.CaseinfobyzjhResVO">
+        select t.ah,t3.dmmc ajzt,'申请人：'||t.s_sqr||';被执行人：'||t.s_bzxr as dsr,to_char(t.larq,'yyyymmdd') sarq,to_char(t.larq,'yyyymmdd') larq,'' ktsj,to_char(t2.sjjarq,'yyyymmdd') jarq,tt.xzqhdm fydm,tt.fymc,
+        t.cbbm,t5.mc bmmc,t6.xm cbfg,t7.xm sjy,'' ftmc,t.ajbs ahdm,t6.oayhid as cbfgid
+        from (select a.sanh,a.fydm,a.sabh,b.xzqhdm,b.fymc from zxnew.dsr a,zd.zd_fy b where a.fydm = b.fybm and (tyshxydm  like #{sfzhm} or sfz like #{sfzhm} ) and a.fydm like concat( #{fydm},'%') ) tt
+        left outer join zxnew.ajjb t on tt.sanh = t.sanh and tt.fydm = t.fydm and tt.sabh = t.sabh
+        left outer join zxnew.dm_ajzh t1 on t.ajzh = t1.ajzh and t.fydm = t1.fydm
+        left outer join zxnew.ja t2 on t.sanh = t2.sanh and t.fydm = t2.fydm and t.sabh = t2.sabh
+        left outer join rs.rs_zb_zyrsjbxx t6 on t.cbrdm = t6.zybm
+        left outer join rs.rs_zb_zyrsjbxx t7 on t.sjydm = t7.zybm
+        left outer join rs.rs_dm_bmszb t5 on t.cbbm = t5.bm and t.fydm = t5.fy
+        left outer join zxnew.dmwh t3 on t.ajzt = t3.dm and t3.dmlx = '14'
+        where (to_char(t.larq,'yyyymmdd') >= #{ssrq} or #{ssrq} is null);
+    </select>
+    <select id="selectGoods" resultType="java.util.Map">
+        select * from goods limit 1,10
+    </select>
+
+</mapper>

@@ -1,0 +1,6 @@
+spring: #springboot的配置
+  datasource: #定义数据源
+    url: jdbc:oceanbase:oracle://203.49.10.78:2883/YMMRUSER
+    username: ymmruser@gydc_ohy#ob_gy
+    password: ymmruser#0571
+    driver-class-name: com.alipay.oceanbase.jdbc.Driver
