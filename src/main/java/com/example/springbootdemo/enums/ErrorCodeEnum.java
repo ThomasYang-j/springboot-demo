@@ -5,6 +5,7 @@ package com.example.springbootdemo.enums;
  * @date 2022/4/13 19:40
  */
 public enum ErrorCodeEnum {
+    SUCCESS(200, "成功"),
     PARAM_ERR(301, "参数错误"),
     DATA_NOT_EXIST(302, "数据不存在"),
     DATA_ALREADY_EXIST(303, "数据已存在"),
