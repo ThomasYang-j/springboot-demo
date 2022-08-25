@@ -1,6 +1,6 @@
 spring: #springboot的配置
   datasource: #定义数据源
-    url: jdbc:mysql://192.168.101.201:3306/ding_talk?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
-    username: qa_asr
-    password: qa@asr
+    url: jdbc:mysql://127.0.0.1:3306/india?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: ygx2395848846
     driver-class-name: com.mysql.cj.jdbc.Driver

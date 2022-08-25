@@ -10,7 +10,7 @@ spring:
   application:
     name: springboot-demo
   profiles:
-    active: test
+    active: dev
 
 
 mybatis:
